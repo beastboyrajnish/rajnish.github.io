@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Special Journey ❤️</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Inter, Caveat, Playfair Display, Sacramento -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Sacramento&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f0c1b;
+            overflow-x: hidden;
+        }
+        .font-romantic {
+            font-family: 'Playfair Display', serif;
+        }
+        .font-handwritten {
+            font-family: 'Caveat', cursive;
+        }
+        .font-cursive {
+            font-family: 'Sacramento', cursive;
+        }
+        /* Custom scrollbar for letter */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 182, 193, 0.1);
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(244, 63, 94, 0.4);
+            border-radius: 10px;
+        }
+        /* Custom animations */
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .animate-heartbeat {
+            animation: heartbeat 1.4s infinite;
+        }
+        @keyframes float-slow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+        .animate-float {
+            animation: float-slow 4s ease-in-out infinite;
+        }
+        /* Card swipe animation helpers */
+        .card-stack {
+            position: relative;
+            perspective: 1000px;
+        }
+        .swipe-card {
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.6s, z-index 0s;
+            transform-origin: bottom center;
+        }
+        /* Envelope animation */
+        .envelope-flap {
+            transition: transform 0.6s ease;
+            transform-origin: top;
+        }
+        .envelope-open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 5;
+        }
+        .letter-content {
+            transition: transform 0.8s ease 0.3s;
+        }
+        .envelope-open .letter-content {
+            transform: translateY(-110px);
+            z-index: 10;
+        }
+        /* Pulsing music waves */
+        .music-bar {
+            width: 3px;
+            height: 12px;
+            background-color: #f43f5e;
+            animation: bounce-bar 0.8s ease-in-out infinite alternate;
+        }
+        @keyframes bounce-bar {
+            0% { height: 4px; }
+            100% { height: 18px; }
+        }
+        button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4 text-slate-800 selection:bg-rose-200">
+
+    <!-- Customization Config Drawer -->
+    <div id="configDrawer" class="fixed top-4 left-4 z-50">
+        <button onclick="toggleConfigDrawer()" class="bg-rose-600 hover:bg-rose-700 text-white p-3 rounded-full shadow-lg transition-transform hover:scale-110 flex items-center justify-center gap-2 text-sm font-semibold">
+            <i class="fa-solid fa-gears text-lg"></i>
+            <span class="hidden md:inline">Customize Surprise</span>
+        </button>
+        
+        <div id="drawerContent" class="hidden mt-2 bg-white/95 backdrop-blur-md p-5 rounded-2xl shadow-2xl border border-rose-100 w-72 md:w-80 transition-all duration-300 max-h-[80vh] overflow-y-auto custom-scrollbar">
+            <h3 class="font-romantic text-lg font-bold text-rose-800 mb-3 border-b pb-2"><i class="fa-solid fa-heart mr-2"></i>Customize Card</h3>
+            
+            <div class="space-y-3 text-xs md:text-sm">
+                <div>
+                    <label class="block font-medium text-gray-700 mb-1">Your Partner's Name</label>
+                    <input type="text" id="cfgPartnerName" value="Muskan" class="w-full px-3 py-1.5 border border-rose-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-medium text-gray-700 mb-1">Your Name</label>
+                    <input type="text" id="cfgYourName" value="Rajnish" class="w-full px-3 py-1.5 border border-rose-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block font-medium text-gray-700 mb-1">Target Anniversary Date</label>
+                    <input type="datetime-local" id="cfgTargetDate" class="w-full px-3 py-1.5 border border-rose-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:outline-none">
+                </div>
+                
+                <!-- Moments Gallery Image Upload Section -->
+                <div class="border-t border-rose-100 pt-3 mt-2">
+                    <label class="block font-bold text-rose-700 mb-1.5 flex items-center gap-1.5">
+                        <i class="fa-solid fa-images text-xs"></i> Moments Gallery (Upload)
+                    </label>
+                    <div class="grid grid-cols-3 gap-2 bg-rose-50/50 p-2.5 rounded-xl border border-rose-100">
+                        <div class="flex flex-col items-center">
+                            <span class="text-[9px] text-gray-500 font-semibold mb-1">Moment 1</span>
+                            <label class="relative cursor-pointer w-12 h-12 rounded-lg bg-white border border-rose-200 flex items-center justify-center overflow-hidden hover:bg-rose-50">
+                                <img id="thumb-preview-1" src="DSC01282.jpg" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/48x48/ffc0cb/800080?text=1'">
+                                <input type="file" accept="image/*" onchange="handleImageUpload(1, event)" class="hidden">
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-[9px] text-gray-500 font-semibold mb-1">Moment 2</span>
+                            <label class="relative cursor-pointer w-12 h-12 rounded-lg bg-white border border-rose-200 flex items-center justify-center overflow-hidden hover:bg-rose-50">
+                                <img id="thumb-preview-2" src="DSC01311.jpg" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/48x48/ffc0cb/800080?text=2'">
+                                <input type="file" accept="image/*" onchange="handleImageUpload(2, event)" class="hidden">
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-[9px] text-gray-500 font-semibold mb-1">Moment 3</span>
+                            <label class="relative cursor-pointer w-12 h-12 rounded-lg bg-white border border-rose-200 flex items-center justify-center overflow-hidden hover:bg-rose-50">
+                                <img id="thumb-preview-3" src="DSC02361.jpg" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/48x48/ffc0cb/800080?text=3'">
+                                <input type="file" accept="image/*" onchange="handleImageUpload(3, event)" class="hidden">
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-center mt-1">
+                            <span class="text-[9px] text-gray-500 font-semibold mb-1">Moment 4</span>
+                            <label class="relative cursor-pointer w-12 h-12 rounded-lg bg-white border border-rose-200 flex items-center justify-center overflow-hidden hover:bg-rose-50">
+                                <img id="thumb-preview-4" src="h.jpg" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/48x48/ffc0cb/800080?text=4'">
+                                <input type="file" accept="image/*" onchange="handleImageUpload(4, event)" class="hidden">
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-center mt-1">
+                            <span class="text-[9px] text-gray-500 font-semibold mb-1">Moment 5</span>
+                            <label class="relative cursor-pointer w-12 h-12 rounded-lg bg-white border border-rose-200 flex items-center justify-center overflow-hidden hover:bg-rose-50">
+                                <img id="thumb-preview-5" src="16.jpg" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/48x48/ffc0cb/800080?text=5'">
+                                <input type="file" accept="image/*" onchange="handleImageUpload(5, event)" class="hidden">
+                            </label>
+                        </div>
+                        <div class="flex flex-col items-center mt-1">
+                            <span class="text-[9px] text-gray-500 font-semibold mb-1">Moment 6</span>
+                            <label class="relative cursor-pointer w-12 h-12 rounded-lg bg-white border border-rose-200 flex items-center justify-center overflow-hidden hover:bg-rose-50">
+                                <img id="thumb-preview-6" src="25.jpg" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/48x48/ffc0cb/800080?text=6'">
+                                <input type="file" accept="image/*" onchange="handleImageUpload(6, event)" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- AI Letter Generator section -->
+                <div class="border-t border-rose-100 pt-3 mt-2">
+                    <label class="block font-bold text-rose-700 mb-1 flex items-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i> Gemini Romantic AI
+                    </label>
+                    <div class="space-y-2 bg-rose-50/50 p-2.5 rounded-xl border border-rose-100">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Letter Tone</label>
+                            <select id="aiLetterTone" class="w-full px-2 py-1 text-xs border border-rose-200 rounded focus:outline-none focus:ring-1 focus:ring-rose-400">
+                                <option value="Poetic & Deep">Poetic & Deep 🌹</option>
+                                <option value="Playful & Funny">Playful & Funny 😜</option>
+                                <option value="Nostalgic">Nostalgic 🕰️</option>
+                                <option value="Cozy & Sweet">Cozy & Sweet 🧸</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-gray-600 mb-0.5">Special Memory (Optional)</label>
+                            <input type="text" id="aiLetterMemory" placeholder="e.g., our beautiful waterfall trip" class="w-full px-2 py-1 text-xs border border-rose-200 rounded focus:outline-none focus:ring-1 focus:ring-rose-400">
+                        </div>
+                        <button onclick="generateAILoveLetter()" id="aiGenerateBtn" class="w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-semibold py-1.5 rounded text-xs transition-transform flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-sparkles"></i> Generate AI Letter
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-medium text-gray-700 mb-1">Custom Letter Content</label>
+                    <textarea id="cfgLetterText" rows="4" class="w-full px-3 py-1.5 border border-rose-200 rounded-lg focus:ring-2 focus:ring-rose-400 focus:outline-none custom-scrollbar">Dear Muskan,
+
+It's our day again... From the very first day, you have been my favorite chapter - the one I keep re-reading.
+
+Thank you for the small things. The morning glances. The shared silences. The way you say my name like it meant home.
+
+I promise to keep choosing you, in every season, every weather, every version of us we grow into. Here's to another year of tiny moments and big love.
+
+Always yours,
+Rajnish</textarea>
+                </div>
+                <button onclick="applyConfiguration()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2 rounded-lg transition-colors">Apply Changes ✨</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Animated Canvas for floating hearts -->
+    <canvas id="heartCanvas" class="fixed inset-0 pointer-events-none z-0"></canvas>
+
+    <!-- Main Container Mimicking a Luxury Smartphone Display -->
+    <div class="relative w-full max-w-[400px] h-[780px] bg-[#0c0512] rounded-[48px] shadow-[0_0_60px_rgba(244,63,94,0.25)] border-[12px] border-[#1e112d] overflow-hidden flex flex-col z-10 select-none">
+        
+        <!-- Phone Camera Notch / Status bar -->
+        <div class="absolute top-0 inset-x-0 h-7 bg-transparent flex justify-between items-center px-8 z-50 text-[10px] text-rose-200 font-semibold tracking-wider">
+            <span>9:41</span>
+            <div class="w-24 h-4.5 bg-[#1e112d] rounded-b-2xl absolute left-1/2 -translate-x-1/2 top-0 flex items-center justify-center">
+                <div class="w-3 h-3 bg-black rounded-full mr-2"></div>
+                <div class="w-8 h-1 bg-gray-800 rounded-full"></div>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-signal"></i>
+                <i class="fa-solid fa-wifi"></i>
+                <i class="fa-solid fa-battery-three-quarters"></i>
+            </div>
+        </div>
+
+        <!-- Floating Background Music Player Controller -->
+        <div class="absolute top-10 right-4 z-50">
+            <button onclick="toggleBackgroundMusic()" id="musicToggleBtn" class="bg-rose-600/90 text-white p-2.5 rounded-full shadow-lg transition-all hover:scale-110 flex items-center justify-center gap-1 text-[11px] font-bold border border-rose-300">
+                <i id="musicIcon" class="fa-solid fa-music text-sm"></i>
+                <span id="musicStatusText">Play Music 🎵</span>
+            </button>
+            <div id="musicWaves" class="hidden justify-center items-end gap-1 mt-1.5 pr-2">
+                <div class="music-bar" style="animation-delay: 0.1s"></div>
+                <div class="music-bar" style="animation-delay: 0.4s"></div>
+                <div class="music-bar" style="animation-delay: 0.2s"></div>
+            </div>
+        </div>
+
+        <!-- App Screen Pages Wrapper -->
+        <div class="relative flex-1 flex flex-col bg-gradient-to-b from-[#ffedf2] via-[#ffd6e2] to-[#ffb6ce] pt-8 overflow-hidden">
+            
+            <!-- PROGRESS DOTS NAVIGATION AT THE TOP -->
+            <div class="flex justify-center gap-1.5 my-3 px-4 z-40">
+                <template id="dotTemplate">
+                    <div class="h-1.5 rounded-full transition-all duration-300 bg-rose-300 w-1.5"></div>
+                </template>
+                <div id="navigationDots" class="flex gap-1"></div>
+            </div>
+
+            <!-- STEP 1: WELCOME & COUNTDOWN -->
+            <div id="step-1" class="step-pane flex-1 flex flex-col items-center justify-between px-6 pb-6 pt-2">
+                <div class="text-center w-full">
+                    <p class="text-[11px] uppercase tracking-[0.2em] text-rose-500 font-semibold mb-1">1st Anniversary</p>
+                    <h1 class="font-romantic text-3xl font-bold text-rose-800 mt-1 mb-2">Happy Anniversary, <span class="partner-name text-rose-600">Muskan</span></h1>
+                </div>
+
+                <!-- Couple Illustration Container -->
+                <div class="relative my-4 flex items-center justify-center w-48 h-48 animate-float">
+                    <div class="absolute inset-0 bg-rose-200/50 rounded-full blur-2xl"></div>
+                    <!-- Cute Couple Custom SVG Illustration -->
+                    <svg class="w-40 h-40 z-10" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="100" r="80" fill="#ffd0dd" />
+                        <circle cx="100" cy="100" r="70" fill="url(#pinkGrad)" />
+                        <path d="M45 75C45 69.5 49.5 65 55 65C60.5 65 65 69.5 65 75C65 80.5 60.5 85 55 85C49.5 85 45 80.5 45 75Z" fill="#ff99b4" opacity="0.6"/>
+                        <path d="M140 65C140 59.5 144.5 55 150 55C155.5 55 160 59.5 160 65C160 70.5 155.5 75 150 75C144.5 75 140 70.5 140 65Z" fill="#ff99b4" opacity="0.6"/>
+                        
+                        <g transform="translate(45, 60)">
+                            <!-- Boy element left -->
+                            <rect x="25" y="45" width="28" height="35" rx="14" fill="#a5b4fc" />
+                            <circle cx="39" cy="31" r="14" fill="#fecdd3" />
+                            <path d="M28 27C28 27 34 18 40 25C46 18 50 27 50 27" fill="#475569" />
+                            <!-- Girl element right -->
+                            <rect x="58" y="45" width="28" height="35" rx="14" fill="#f472b6" />
+                            <circle cx="72" cy="31" r="14" fill="#fecdd3" />
+                            <path d="M60 27C60 21 68 15 75 22C82 15 84 27 84 27" fill="#b91c1c" />
+                            <!-- Sparking Hearts in between -->
+                            <path d="M52 20C52 18.5 53.5 17 55 17C56.5 17 58 18.5 58 20C58 21.5 55 24 55 24C55 24 52 21.5 52 20Z" fill="#dc2626" class="animate-heartbeat"/>
+                        </g>
+                        <defs>
+                            <radialGradient id="pinkGrad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" transform="translate(100 100) rotate(90) scale(70)">
+                                <stop offset="0%" stop-color="#fff1f5"/>
+                                <stop offset="100%" stop-color="#ffb6ce"/>
+                            </radialGradient>
+                        </defs>
+                    </svg>
+                    <span class="absolute top-2 left-6 text-2xl animate-bounce" style="animation-delay: 0.2s">💖</span>
+                    <span class="absolute bottom-6 right-6 text-xl animate-bounce" style="animation-delay: 0.8s">🌸</span>
+                    <span class="absolute top-12 right-4 text-2xl animate-pulse">✨</span>
+                </div>
+
+                <!-- Countdown Timer Area -->
+                <div class="bg-white/60 backdrop-blur-md rounded-2xl p-4 w-full border border-white/40 shadow-sm text-center">
+                    <p class="text-[10px] uppercase font-bold text-rose-500 tracking-wider mb-2">Our Day Arrives In...</p>
+                    <div class="grid grid-cols-4 gap-2 text-rose-800">
+                        <div class="bg-rose-50/80 rounded-xl p-1.5 flex flex-col items-center">
+                            <span id="days" class="text-xl font-bold">16</span>
+                            <span class="text-[8px] uppercase tracking-wide opacity-80">Days</span>
+                        </div>
+                        <div class="bg-rose-50/80 rounded-xl p-1.5 flex flex-col items-center">
+                            <span id="hours" class="text-xl font-bold">24</span>
+                            <span class="text-[8px] uppercase tracking-wide opacity-80">Hrs</span>
+                        </div>
+                        <div class="bg-rose-50/80 rounded-xl p-1.5 flex flex-col items-center">
+                            <span id="minutes" class="text-xl font-bold">26</span>
+                            <span class="text-[8px] uppercase tracking-wide opacity-80">Mins</span>
+                        </div>
+                        <div class="bg-rose-50/80 rounded-xl p-1.5 flex flex-col items-center">
+                            <span id="seconds" class="text-xl font-bold">26</span>
+                            <span class="text-[8px] uppercase tracking-wide opacity-80">Secs</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive runaway "No" button / surprise invitation -->
+                <div class="w-full text-center mt-3 relative">
+                    <p class="text-rose-700 text-xs font-semibold mb-3">Ready for a little surprise?</p>
+                    <div class="flex justify-center gap-4 relative h-12">
+                        <button onclick="nextStep()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-2.5 rounded-full shadow-md transform active:scale-95 transition-all text-sm z-10 min-w-[100px]">
+                            Yes
+                        </button>
+                        <button id="runawayNoBtn" class="bg-white hover:bg-rose-50 text-rose-600 font-bold px-8 py-2.5 rounded-full border border-rose-200 shadow-sm transition-all text-sm absolute z-20 min-w-[100px]" style="left: calc(50% + 10px);">
+                            No
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: SWEET MOMENTS (Tinder Swipe Style Cards with User Images and Custom Quotes) -->
+            <div id="step-2" class="step-pane flex-1 hidden flex-col items-center justify-between px-6 pb-6 pt-2">
+                <div class="text-center">
+                    <h2 class="font-romantic text-2xl font-bold text-rose-800">Some Sweet Moments</h2>
+                    <p class="text-[10px] uppercase font-bold text-rose-500 tracking-wider mt-0.5">(Swipe or Tap heart to browse)</p>
+                </div>
+
+                <!-- Card Slider Area -->
+                <div class="w-full flex-1 flex items-center justify-center py-2">
+                    <div class="card-stack w-full max-w-[280px] h-[370px] relative" id="cardStackContainer">
+                        <!-- Card 6 -->
+                        <div id="card-6" class="swipe-card absolute inset-0 bg-white rounded-2xl shadow-xl border border-rose-100 p-3 flex flex-col justify-between transform rotate-2 translate-y-1">
+                            <div class="relative w-full h-[220px] bg-rose-50 rounded-xl overflow-hidden">
+                                <img src="25.jpg" alt="Moment 6" class="absolute inset-0 w-full h-full object-cover rounded-lg" onerror="this.src='https://placehold.co/280x280/ffc0cb/800080?text=Radiant+Smile'">
+                                <label class="absolute bottom-2 right-2 bg-black/60 hover:bg-black/85 text-white p-2 rounded-full cursor-pointer transition-all shadow-md flex items-center justify-center text-[10px]">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <input type="file" accept="image/*" onchange="handleImageUpload(6, event)" class="hidden">
+                                </label>
+                            </div>
+                            <div class="text-center pt-2 px-1">
+                                <p class="font-romantic text-rose-800 font-bold text-xs">That Radiant Smile</p>
+                                <p class="text-[9px] text-rose-500 font-medium italic">"That smile of yours... it could light up the darkest hallways. Never stop smiling, my love."</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 5 -->
+                        <div id="card-5" class="swipe-card absolute inset-0 bg-white rounded-2xl shadow-xl border border-rose-100 p-3 flex flex-col justify-between transform -rotate-2 -translate-y-1">
+                            <div class="relative w-full h-[220px] bg-rose-50 rounded-xl overflow-hidden">
+                                <img src="16.jpg" alt="Moment 5" class="absolute inset-0 w-full h-full object-cover rounded-lg" onerror="this.src='https://placehold.co/280x280/ffc0cb/800080?text=Shy+And+Sweet'">
+                                <label class="absolute bottom-2 right-2 bg-black/60 hover:bg-black/85 text-white p-2 rounded-full cursor-pointer transition-all shadow-md flex items-center justify-center text-[10px]">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <input type="file" accept="image/*" onchange="handleImageUpload(5, event)" class="hidden">
+                                </label>
+                            </div>
+                            <div class="text-center pt-2 px-1">
+                                <p class="font-romantic text-rose-800 font-bold text-xs">Sweet & Shy</p>
+                                <p class="text-[9px] text-rose-500 font-medium italic">"Even when you try to hide, my heart finds yours instantly. You are so adorable!"</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 4 -->
+                        <div id="card-4" class="swipe-card absolute inset-0 bg-white rounded-2xl shadow-xl border border-rose-100 p-3 flex flex-col justify-between transform rotate-3 translate-x-1">
+                            <div class="relative w-full h-[220px] bg-rose-50 rounded-xl overflow-hidden">
+                                <img src="h.jpg" alt="Moment 4" class="absolute inset-0 w-full h-full object-cover rounded-lg" onerror="this.src='https://placehold.co/280x280/ffc0cb/800080?text=Joyful+Ride'">
+                                <label class="absolute bottom-2 right-2 bg-black/60 hover:bg-black/85 text-white p-2 rounded-full cursor-pointer transition-all shadow-md flex items-center justify-center text-[10px]">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <input type="file" accept="image/*" onchange="handleImageUpload(4, event)" class="hidden">
+                                </label>
+                            </div>
+                            <div class="text-center pt-2 px-1">
+                                <p class="font-romantic text-rose-800 font-bold text-xs">Laughing Together</p>
+                                <p class="text-[9px] text-rose-500 font-medium italic">"Laughing with you is my absolute favorite thing. Thank you for lifting me up, always!"</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div id="card-3" class="swipe-card absolute inset-0 bg-white rounded-2xl shadow-xl border border-rose-100 p-3 flex flex-col justify-between transform -rotate-1 translate-y-2">
+                            <div class="relative w-full h-[220px] bg-rose-50 rounded-xl overflow-hidden">
+                                <img src="DSC02361.jpg" alt="Moment 3" class="absolute inset-0 w-full h-full object-cover rounded-lg" onerror="this.src='https://placehold.co/280x280/ffc0cb/800080?text=Festive+Night'">
+                                <label class="absolute bottom-2 right-2 bg-black/60 hover:bg-black/85 text-white p-2 rounded-full cursor-pointer transition-all shadow-md flex items-center justify-center text-[10px]">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <input type="file" accept="image/*" onchange="handleImageUpload(3, event)" class="hidden">
+                                </label>
+                            </div>
+                            <div class="text-center pt-2 px-1">
+                                <p class="font-romantic text-rose-800 font-bold text-xs">Perfect Match</p>
+                                <p class="text-[9px] text-rose-500 font-medium italic">"Under the starry night, dressed in festive colors, you are the brightest light in my life."</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div id="card-2" class="swipe-card absolute inset-0 bg-white rounded-2xl shadow-xl border border-rose-100 p-3 flex flex-col justify-between transform rotate-1 -translate-y-2">
+                            <div class="relative w-full h-[220px] bg-rose-50 rounded-xl overflow-hidden">
+                                <img src="DSC01311.jpg" alt="Moment 2" class="absolute inset-0 w-full h-full object-cover rounded-lg" onerror="this.src='https://placehold.co/280x280/ffc0cb/800080?text=Beautiful+Stairs'">
+                                <label class="absolute bottom-2 right-2 bg-black/60 hover:bg-black/85 text-white p-2 rounded-full cursor-pointer transition-all shadow-md flex items-center justify-center text-[10px]">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <input type="file" accept="image/*" onchange="handleImageUpload(2, event)" class="hidden">
+                                </label>
+                            </div>
+                            <div class="text-center pt-2 px-1">
+                                <p class="font-romantic text-rose-800 font-bold text-xs">Breathless View</p>
+                                <p class="text-[9px] text-rose-500 font-medium italic">"Just looking at you takes my breath away, more than any waterfall ever could."</p>
+                            </div>
+                        </div>
+
+                        <!-- Card 1 (Top Card) -->
+                        <div id="card-1" class="swipe-card absolute inset-0 bg-white rounded-2xl shadow-2xl border border-rose-100 p-3 flex flex-col justify-between z-10 transform -rotate-3 translate-x-1">
+                            <div class="relative w-full h-[220px] bg-rose-50 rounded-xl overflow-hidden">
+                                <img src="DSC01282.jpg" alt="Moment 1" class="absolute inset-0 w-full h-full object-cover rounded-lg" onerror="this.src='https://placehold.co/280x280/ffc0cb/800080?text=Waterfall+Adventure'">
+                                <label class="absolute bottom-2 right-2 bg-black/60 hover:bg-black/85 text-white p-2 rounded-full cursor-pointer transition-all shadow-md flex items-center justify-center text-[10px]">
+                                    <i class="fa-solid fa-camera"></i>
+                                    <input type="file" accept="image/*" onchange="handleImageUpload(1, event)" class="hidden">
+                                </label>
+                            </div>
+                            <div class="text-center pt-2 px-1">
+                                <p class="font-romantic text-rose-800 font-bold text-xs">Chasing Waterfalls</p>
+                                <p class="text-[9px] text-rose-500 font-medium italic">"My favorite adventures are the ones we share. Let's chase every waterfall together."</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Swipe buttons & visual indicator -->
+                <div class="w-full flex flex-col items-center mt-2">
+                    <div class="flex gap-4 mb-3">
+                        <button onclick="handleCardNav(-1)" class="w-10 h-10 rounded-full bg-white border border-rose-100 flex items-center justify-center shadow-md active:scale-95 text-rose-500 transition-all hover:bg-rose-50">
+                            <i class="fa-solid fa-arrow-rotate-left"></i>
+                        </button>
+                        <button onclick="handleCardNav(1)" class="w-12 h-12 rounded-full bg-gradient-to-r from-rose-500 to-pink-600 flex items-center justify-center shadow-lg active:scale-95 text-white transition-all transform hover:scale-105">
+                            <i class="fa-solid fa-heart text-lg"></i>
+                        </button>
+                    </div>
+                    <button onclick="nextStep()" class="bg-white hover:bg-rose-50 border border-rose-200 text-rose-700 font-bold px-8 py-2.5 rounded-full shadow-sm text-xs transition-all w-full max-w-[240px]">
+                        Continue Journey
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: LOVE METER -->
+            <div id="step-3" class="step-pane flex-1 hidden flex-col items-center justify-between px-6 pb-6 pt-2">
+                <div class="text-center">
+                    <h2 class="font-romantic text-2xl font-bold text-rose-800">Love Meter</h2>
+                    <p class="text-xs text-rose-600 font-medium mt-1">Our love grows stronger every single second.</p>
+                </div>
+
+                <!-- Custom Interactive Capsule Meter -->
+                <div class="flex-1 flex flex-col items-center justify-center w-full relative">
+                    
+                    <div class="relative w-28 h-64 bg-white/50 border-[5px] border-white rounded-full overflow-hidden shadow-inner flex flex-col justify-end p-1 cursor-pointer select-none group" onclick="fillLoveMeter()">
+                        
+                        <div id="loveFill" class="w-full rounded-full bg-gradient-to-t from-rose-600 to-pink-500 transition-all duration-300 relative" style="height: 10%">
+                            <div class="absolute inset-0 overflow-hidden rounded-full opacity-60">
+                                <span class="absolute text-[10px] bottom-4 left-2 animate-bounce">❤️</span>
+                                <span class="absolute text-[12px] bottom-10 right-4 animate-ping">❤️</span>
+                                <span class="absolute text-[10px] bottom-16 left-5 animate-pulse">❤️</span>
+                            </div>
+                        </div>
+
+                        <!-- Touch Button graphic at center -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center z-10 text-center pointer-events-none">
+                            <div class="w-14 h-14 rounded-full bg-white/90 shadow-md flex items-center justify-center text-rose-600 animate-heartbeat group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-hand-pointer text-xl"></i>
+                            </div>
+                            <span id="lovePercent" class="text-lg font-bold text-rose-800 mt-2 bg-white/80 px-2.5 py-0.5 rounded-full shadow-sm">10%</span>
+                        </div>
+                    </div>
+
+                    <p class="text-center text-[11px] text-rose-500 font-bold mt-4 tracking-wide animate-pulse">Tap Capsule repeatedly to fill with love!</p>
+                </div>
+
+                <div class="w-full text-center">
+                    <button id="loveMeterNextBtn" onclick="nextStep()" disabled class="bg-gray-300 text-gray-500 font-bold px-8 py-2.5 rounded-full shadow-sm text-xs cursor-not-allowed w-full max-w-[240px] transition-all">
+                        Fill Meter First 💖
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 4: PINKY PROMISE -->
+            <div id="step-4" class="step-pane flex-1 hidden flex-col items-center justify-between px-6 pb-6 pt-2">
+                <div class="text-center">
+                    <p class="text-[10px] uppercase font-bold text-rose-500 tracking-wider">A Pinky Promise? 🤙</p>
+                    <h2 class="font-romantic text-2xl font-bold text-rose-800 mt-1">Touch to Promise</h2>
+                </div>
+
+                <!-- Pinky promise hands graphic -->
+                <div class="flex-1 flex flex-col items-center justify-center w-full relative">
+                    <div id="pinkyContainer" onclick="touchPromise()" class="relative w-48 h-48 rounded-full bg-white/40 border border-white/60 shadow-xl flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95 group">
+                        
+                        <!-- Heart Pulse rings -->
+                        <div class="absolute inset-0 rounded-full border border-rose-400 opacity-0 group-hover:animate-ping"></div>
+                        <div class="absolute -inset-4 rounded-full border border-rose-300 opacity-0 group-hover:animate-ping" style="animation-delay: 0.2s"></div>
+                        
+                        <svg class="w-32 h-32 text-rose-700 z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 10a2 2 0 1 1-4 0v-1a1 1 0 0 0-1-1H9a3 3 0 0 0-3 3v4a5 5 0 0 0 10 0v-1" />
+                            <path d="M14 11v-4a2 2 0 1 0-4 0v4" />
+                            <path d="M10 11V5a2 2 0 1 0-4 0v6" />
+                            <path d="M6 11V7a2 2 0 1 0-4 0v4a10 10 0 0 0 20 0v-4" />
+                        </svg>
+
+                        <!-- Glowing Heart floating directly above promise hands connection -->
+                        <div id="promiseHeart" class="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 text-rose-500 text-3xl opacity-0 transition-all duration-500 scale-50">
+                            ❤️
+                        </div>
+                    </div>
+
+                    <p id="promiseHint" class="text-center text-xs text-rose-600 font-semibold mt-6 max-w-[240px]">"A million promises kept, and a billion more to go. Stay by my side?"</p>
+                </div>
+
+                <div class="w-full text-center">
+                    <button id="promiseNextBtn" onclick="nextStep()" disabled class="bg-gray-300 text-gray-500 font-bold px-8 py-2.5 rounded-full shadow-sm text-xs cursor-not-allowed w-full max-w-[240px] transition-all">
+                        Tap To Promise 🤙
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 5: BLOW THE CANDLE -->
+            <div id="step-5" class="step-pane flex-1 hidden flex-col items-center justify-between px-6 pb-6 pt-2">
+                <div class="text-center">
+                    <p class="text-[10px] uppercase font-bold text-rose-500 tracking-wider">Make a Wish</p>
+                    <h2 class="font-romantic text-2xl font-bold text-rose-800 mt-1">Blow the candle, my love</h2>
+                </div>
+
+                <!-- Custom Cake with interactive glowing candle -->
+                <div class="flex-1 flex flex-col items-center justify-center w-full relative">
+                    <div class="relative w-52 h-52 flex flex-col justify-end items-center">
+                        
+                        <!-- Candle stick -->
+                        <div class="absolute bottom-24 w-4 h-14 bg-gradient-to-r from-rose-200 to-pink-300 rounded-md shadow-sm flex flex-col items-center">
+                            <div class="w-full h-1 bg-rose-400 rounded-sm mt-2 opacity-50"></div>
+                            <div class="w-full h-1 bg-rose-400 rounded-sm mt-2 opacity-30"></div>
+                            <div class="absolute -top-3 w-0.5 h-3 bg-gray-800"></div>
+                            
+                            <!-- FLAME SVG GRAPHIC -->
+                            <div id="candleFlame" class="absolute -top-8 w-6 h-8 origin-bottom animate-heartbeat transition-all duration-500">
+                                <svg viewBox="0 0 100 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M50 0C50 0 90 40 90 90C90 123.137 63.137 150 30 150C3.13708 150 0 110 0 90C0 40 50 0 50 0Z" fill="url(#flameGrad)" />
+                                    <defs>
+                                        <radialGradient id="flameGrad" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" transform="translate(50 90) rotate(90) scale(60)">
+                                            <stop offset="0%" stop-color="#fffbeb"/>
+                                            <stop offset="35%" stop-color="#f59e0b"/>
+                                            <stop offset="100%" stop-color="#ef4444"/>
+                                        </radialGradient>
+                                    </defs>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Cupcake base design -->
+                        <div class="w-44 h-24 bg-[#fed7aa] rounded-t-[32px] rounded-b-[16px] shadow-lg border-b-[8px] border-amber-200 relative overflow-hidden flex flex-col justify-end items-center">
+                            <div class="absolute top-0 inset-x-0 h-8 bg-rose-100 flex justify-around items-start">
+                                <div class="w-8 h-8 rounded-full bg-rose-100 -mt-2"></div>
+                                <div class="w-8 h-8 rounded-full bg-rose-100 -mt-2"></div>
+                                <div class="w-8 h-8 rounded-full bg-rose-100 -mt-2"></div>
+                                <div class="w-8 h-8 rounded-full bg-rose-100 -mt-2"></div>
+                                <div class="w-8 h-8 rounded-full bg-rose-100 -mt-2"></div>
+                            </div>
+                            <div class="absolute top-10 left-8 w-2 h-1 bg-rose-400 rounded-full rotate-45"></div>
+                            <div class="absolute top-12 right-12 w-2 h-1 bg-sky-400 rounded-full -rotate-12"></div>
+                            <div class="absolute top-16 left-16 w-1.5 h-1.5 bg-yellow-400 rounded-full"></div>
+                            <div class="absolute top-14 right-6 w-2.5 h-1 bg-lime-400 rounded-full rotate-12"></div>
+                            
+                            <div class="mb-4 bg-white/60 px-3 py-1 rounded-full border border-white/50 text-[10px] font-bold text-amber-900 tracking-wide">
+                                🎂 Close Your Eyes & Blow
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Microphone Blow Button Controller -->
+                    <div class="mt-6 flex flex-col items-center gap-2 w-full">
+                        <button id="micBtn" onclick="toggleMicBlowDetection()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-6 rounded-full shadow-lg flex items-center gap-2.5 text-xs transition-transform active:scale-95">
+                            <i class="fa-solid fa-microphone"></i>
+                            <span id="micBtnText">Blow into the mic</span>
+                        </button>
+                        <button id="simulateBlowBtn" onclick="extinguishCandle()" class="text-[10px] text-rose-500 underline font-semibold mt-1 hover:text-rose-700">
+                            (Or tap here to blow simulation)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="w-full text-center">
+                    <button id="candleNextBtn" onclick="nextStep()" disabled class="bg-gray-300 text-gray-500 font-bold px-8 py-2.5 rounded-full shadow-sm text-xs cursor-not-allowed w-full max-w-[240px] transition-all">
+                        Make a Wish First 🎂
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 6: LETTER FROM MY HEART -->
+            <div id="step-6" class="step-pane flex-1 hidden flex-col items-center justify-between px-6 pb-6 pt-2">
+                <div class="text-center">
+                    <p class="text-[10px] uppercase font-bold text-rose-500 tracking-wider">A Special Note</p>
+                    <h2 class="font-romantic text-2xl font-bold text-rose-800 mt-1">A Letter From My Heart</h2>
+                </div>
+
+                <div class="flex-1 flex flex-col items-center justify-center w-full relative">
+                    <div id="envelope" class="relative w-[280px] h-[180px] bg-[#fff0f3] rounded-2xl border-2 border-rose-100 shadow-xl cursor-pointer select-none mt-16 transition-transform hover:scale-102 flex flex-col items-center justify-center" onclick="toggleEnvelopeOpen()">
+                        
+                        <div class="envelope-flap absolute top-0 inset-x-0 h-1/2 bg-rose-200 border-b-2 border-rose-300 rounded-b-3xl origin-top z-30 flex justify-center items-start pt-1">
+                            <div class="w-5 h-5 bg-rose-500 rounded-full flex items-center justify-center text-white text-[9px] shadow-sm">
+                                <i class="fa-solid fa-heart animate-heartbeat"></i>
+                            </div>
+                        </div>
+
+                        <!-- Inside content sliding letter -->
+                        <div id="letterPaper" class="letter-content absolute bottom-1.5 inset-x-3 h-[240px] bg-rose-50 border border-amber-100 rounded-xl shadow-inner z-10 overflow-hidden flex flex-col p-4 transform translate-y-0">
+                            <div class="flex justify-between items-center text-[9px] text-rose-500 font-bold tracking-widest border-b border-rose-100 pb-1 mb-2">
+                                <span id="letterDateText">DATE: JUNE 15</span>
+                                <i class="fa-solid fa-heart-pulse"></i>
+                            </div>
+                            <div class="flex-1 overflow-y-auto custom-scrollbar text-left text-sm font-handwritten text-rose-950 font-semibold leading-relaxed tracking-wider">
+                                <p id="letterTextOutput" class="whitespace-pre-line"></p>
+                            </div>
+                        </div>
+
+                        <!-- Foreground Front Cover of envelope -->
+                        <div class="absolute inset-x-0 bottom-0 h-1/2 bg-white/90 rounded-b-2xl border-t border-rose-100 z-20 shadow-md flex flex-col items-center justify-end pb-3">
+                            <span class="text-[10px] text-rose-400 font-bold tracking-widest">TAP TO OPEN ENVELOPE</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full text-center">
+                    <button onclick="nextStep()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-2.5 rounded-full shadow-md text-xs transition-all w-full max-w-[240px]">
+                        Keep Scrolling ❤️
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 7: MY PROMISES TO YOU -->
+            <div id="step-7" class="step-pane flex-1 hidden flex-col items-center justify-between px-6 pb-6 pt-2">
+                <div class="text-center w-full">
+                    <p class="text-[10px] uppercase font-bold text-rose-500 tracking-wider">Forever & Always</p>
+                    <h2 class="font-romantic text-2xl font-bold text-rose-800 mt-1">My Promises To You</h2>
+                </div>
+
+                <div class="flex-1 w-full flex flex-col justify-around py-3 overflow-y-auto custom-scrollbar">
+                    
+                    <div class="bg-white/95 rounded-2xl rounded-bl-none p-3 shadow-sm border border-rose-100 max-w-[85%] self-start animate-float" style="animation-delay: 0.1s">
+                        <p class="text-xs font-semibold text-rose-900 leading-relaxed">
+                            "I will laugh at your jokes — even the bad ones. Especially the bad ones!" 😉
+                        </p>
+                    </div>
+
+                    <div class="bg-rose-600 text-white rounded-2xl rounded-br-none p-3 shadow-sm max-w-[85%] self-end animate-float" style="animation-delay: 0.5s">
+                        <p class="text-xs font-semibold leading-relaxed">
+                            "I will choose us, every single day, without hesitation or doubt." 🌹
+                        </p>
+                    </div>
+
+                    <!-- Custom Central Mini Bouquet Illustration -->
+                    <div class="flex justify-center my-1 select-none pointer-events-none">
+                        <div class="relative w-16 h-16 flex items-center justify-center bg-rose-200/50 rounded-full animate-heartbeat">
+                            <span class="text-4xl">💐</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/95 rounded-2xl rounded-bl-none p-3 shadow-sm border border-rose-100 max-w-[85%] self-start animate-float" style="animation-delay: 0.9s">
+                        <p class="text-xs font-semibold text-rose-900 leading-relaxed">
+                            "I will hold your hand through every storm, and celebrate every sunny sky." 🌧️☀️
+                        </p>
+                    </div>
+
+                    <div class="bg-pink-100 rounded-2xl rounded-br-none p-3 shadow-sm border border-pink-200 max-w-[85%] self-end animate-float" style="animation-delay: 1.3s">
+                        <p class="text-xs font-bold text-pink-900 leading-relaxed">
+                            "I will love you a little more tomorrow than I do today. Always."
+                        </p>
+                    </div>
+                </div>
+
+                <div class="w-full text-center">
+                    <button onclick="nextStep()" class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-2.5 rounded-full shadow-md text-xs transition-all w-full max-w-[240px]">
+                        Our Final Gift 🎁
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 8: ONE LAST SURPRISE (Tapping Gift Box) -->
+            <div id="step-8" class="step-pane flex-1 hidden flex-col items-center justify-between px-6 pb-6 pt-2">
+                <div class="text-center">
+                    <p class="text-[10px] uppercase font-bold text-rose-500 tracking-wider">One Last Surprise...</p>
+                    <h2 class="font-romantic text-2xl font-bold text-rose-800 mt-1">A Keepsake Box</h2>
+                </div>
+
+                <div class="flex-1 flex flex-col items-center justify-center w-full relative">
+                    <div id="giftContainer" class="relative w-full flex items-center justify-center cursor-pointer min-h-[300px]">
+                        
+                        <div id="giftBadge" onclick="tapGift()" class="absolute top-10 w-12 h-12 bg-rose-600 text-white font-bold text-sm border-4 border-white rounded-full flex items-center justify-center shadow-lg animate-heartbeat z-30">
+                            3
+                        </div>
+
+                        <!-- 2D Box elements -->
+                        <div id="giftBoxVisual" onclick="tapGift()" class="w-32 h-32 relative flex flex-col items-center justify-end transform transition-transform hover:scale-105 active:scale-95 duration-200 z-10">
+                            <div class="absolute inset-y-0 w-6 bg-yellow-400 z-10 shadow-sm"></div>
+                            <div class="absolute inset-x-0 h-6 bg-yellow-400 top-1/2 -translate-y-1/2 z-10 shadow-sm"></div>
+                            
+                            <div id="giftCap" class="absolute top-0 w-36 h-10 bg-rose-500 rounded-lg shadow-md z-20 border-b-2 border-rose-600 transition-all duration-500 origin-bottom">
+                                <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-10 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
+                                    <div class="w-2 h-2 bg-yellow-600 rounded-full"></div>
+                                </div>
+                            </div>
+
+                            <div class="w-32 h-24 bg-rose-600 rounded-b-xl border border-rose-700 shadow-inner"></div>
+                        </div>
+
+                        <!-- Secret unlocked AI Love Oracle Card -->
+                        <div id="giftKeepsakeCard" class="hidden w-[90%] max-w-[320px] bg-white rounded-2xl shadow-2xl p-4 flex flex-col items-center border-2 border-rose-200 z-20">
+                            <div class="flex items-center gap-1 text-rose-700 font-romantic font-bold text-sm mb-2">
+                                <span>🔮 Gemini Relationship Oracle</span>
+                            </div>
+                            
+                            <div class="w-full bg-rose-50 rounded-xl p-2.5 min-h-[110px] max-h-[150px] overflow-y-auto custom-scrollbar text-left text-[11px] leading-relaxed text-rose-900 border border-rose-100 mb-3 relative">
+                                <div id="oracleLoading" class="hidden absolute inset-0 bg-white/90 backdrop-blur-xs flex flex-col items-center justify-center gap-2 text-rose-500 font-semibold text-[10px]">
+                                    <i class="fa-solid fa-wand-magic-sparkles animate-spin text-lg"></i>
+                                    <span>Oracle is aligning your stars...</span>
+                                </div>
+                                <p id="oracleOutput" class="whitespace-pre-line">"Rajnish & Muskan — A match woven in starlight. Type a prompt below or click one of the magic buttons to consult your romantic future!"</p>
+                            </div>
+
+                            <!-- Interactive AI Commands -->
+                            <div class="w-full space-y-1.5 text-xs">
+                                <input type="text" id="aiOraclePrompt" placeholder="Write a custom memory or request..." class="w-full px-3 py-1.5 border border-rose-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-rose-400 text-[11px]">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button onclick="askLoveOracle('fortune')" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-1.5 rounded-lg text-[10px] shadow transition-colors flex items-center justify-center gap-1">
+                                        🔮 Love Fortune
+                                    </button>
+                                    <button onclick="askLoveOracle('poem')" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-1.5 rounded-lg text-[10px] shadow transition-colors flex items-center justify-center gap-1">
+                                        📜 Custom Poem
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p id="giftMessageHint" class="text-center text-xs text-rose-600 font-bold tracking-wide mt-4">Tap the gift 3 times!</p>
+                </div>
+
+                <!-- Replay & Reset control buttons at bottom -->
+                <div class="w-full text-center">
+                    <button onclick="resetJourney()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-8 py-2.5 rounded-full shadow-sm text-xs transition-all w-full max-w-[240px]">
+                        <i class="fa-solid fa-rotate-left mr-1.5"></i> Restart Surprises
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Phone Navigation Home Bar at footer of mockup -->
+        <div class="h-6 bg-transparent flex items-center justify-center pb-2">
+            <div class="w-32 h-1 bg-gray-800 rounded-full"></div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIG & TARGET STATES
+        let currentStep = 1;
+        const totalSteps = 8;
+        
+        let partnerName = "Muskan";
+        let yourName = "Rajnish";
+
+        // Background music synthesizer variables
+        let audioCtxMusic = null;
+        let synthesizerInterval = null;
+        let isMusicPlaying = false;
+
+        // Step 3 (Love Meter) tap state
+        let loveTapCount = 0;
+        const maxLoveTaps = 12;
+
+        // Step 4 (Pinky Promise) state
+        let promiseTouched = false;
+
+        // Step 5 (Candle Blow) states
+        let audioContext = null;
+        let analyser = null;
+        let micStream = null;
+        let isListening = false;
+        let candleBlown = false;
+
+        // Step 8 (Gift Opening) count state
+        let giftTaps = 3;
+
+        window.onload = function() {
+            // Set dynamic default date for countdown (16 days from today matching the reference video)
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + 16);
+            targetDate.setHours(targetDate.getHours() + 24);
+            targetDate.setMinutes(targetDate.getMinutes() + 26);
+            document.getElementById('cfgTargetDate').value = targetDate.toISOString().slice(0, 16);
+            
+            // Set up current date on the letter paper
+            const months = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+            const currentObj = new Date();
+            document.getElementById('letterDateText').innerText = `DATE: ${months[currentObj.getMonth()]} ${currentObj.getDate()}, ${currentObj.getFullYear()}`;
+
+            applyConfiguration();
+            buildProgressDots();
+
+            // Run countdown tick
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+
+            // Set up background Canvas hearts
+            initHeartCanvas();
+
+            // Setup Runaway "No" button behaviors
+            setupRunawayNoBtn();
+        }
+
+        // ==========================================
+        // procedurally generated warm romantic background theme synthesizer
+        // ==========================================
+        function initProceduralMusic() {
+            if (audioCtxMusic) return;
+            audioCtxMusic = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playSynthTone(freq, startTime, duration, type = 'triangle', volume = 0.08) {
+            if (!audioCtxMusic) return;
+            
+            const osc = audioCtxMusic.createOscillator();
+            const gainNode = audioCtxMusic.createGain();
+            const filterNode = audioCtxMusic.createBiquadFilter();
+
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, startTime);
+
+            // Lowpass filter to keep tones warm, soft and gentle (no harsh high ends)
+            filterNode.type = 'lowpass';
+            filterNode.frequency.setValueAtTime(600, startTime);
+
+            // Smooth envelope with slow attack and gentle decay
+            gainNode.gain.setValueAtTime(0, startTime);
+            gainNode.gain.linearRampToValueAtTime(volume, startTime + 0.3);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + duration - 0.1);
+
+            osc.connect(filterNode);
+            filterNode.connect(gainNode);
+            gainNode.connect(audioCtxMusic.destination);
+
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+
+        // Plays soft romantic chord cycles in a gentle arpeggio
+        function startMusicLoop() {
+            initProceduralMusic();
+            if (audioCtxMusic.state === 'suspended') {
+                audioCtxMusic.resume();
+            }
+
+            let beat = 0;
+            // Warm chord cycle: Cmaj7 -> Fmaj7 -> Am7 -> G6
+            const chords = [
+                [130.81, 164.81, 196.00, 246.94], // Cmaj7 (C3, E3, G3, B3)
+                [174.61, 220.00, 261.63, 329.63], // Fmaj7 (F3, A3, C4, E4)
+                [110.00, 130.81, 164.81, 196.00], // Am7   (A2, C3, E3, G3)
+                [196.00, 246.94, 293.66, 329.63]  // G6    (G3, B3, D4, E4)
+            ];
+
+            function playNextMeasure() {
+                const now = audioCtxMusic.currentTime;
+                const currentChord = chords[beat % chords.length];
+
+                // Soft background pad notes
+                playSynthTone(currentChord[0], now, 3.8, 'sine', 0.05); // Bass
+                playSynthTone(currentChord[1], now, 3.8, 'triangle', 0.04); // Third
+
+                // Arpeggiated melody/chimes
+                playSynthTone(currentChord[2], now + 0.0, 1.5, 'triangle', 0.03);
+                playSynthTone(currentChord[3], now + 0.6, 1.5, 'sine', 0.03);
+                playSynthTone(currentChord[2] * 2, now + 1.2, 1.5, 'sine', 0.02); // octave up
+                playSynthTone(currentChord[3], now + 1.8, 1.5, 'triangle', 0.03);
+
+                beat++;
+            }
+
+            playNextMeasure();
+            synthesizerInterval = setInterval(playNextMeasure, 3800);
+        }
+
+        function toggleBackgroundMusic() {
+            const btnText = document.getElementById('musicStatusText');
+            const icon = document.getElementById('musicIcon');
+            const waves = document.getElementById('musicWaves');
+
+            if (isMusicPlaying) {
+                // Stop music
+                clearInterval(synthesizerInterval);
+                if (audioCtxMusic) {
+                    audioCtxMusic.suspend();
+                }
+                isMusicPlaying = false;
+                btnText.innerText = "Play Music 🎵";
+                icon.className = "fa-solid fa-music text-sm";
+                waves.classList.replace('flex', 'hidden');
+            } else {
+                // Start music
+                startMusicLoop();
+                isMusicPlaying = true;
+                btnText.innerText = "Music Playing";
+                icon.className = "fa-solid fa-heart animate-heartbeat text-sm text-red-500";
+                waves.classList.replace('hidden', 'flex');
+            }
+        }
+
+        // ==========================================
+        // NAVIGATION DOTS SYSTEM
+        // ==========================================
+        function buildProgressDots() {
+            const container = document.getElementById('navigationDots');
+            container.innerHTML = "";
+            const template = document.getElementById('dotTemplate');
+            
+            for(let i = 1; i <= totalSteps; i++) {
+                const clone = template.content.cloneNode(true);
+                const dot = clone.querySelector('div');
+                dot.id = `nav-dot-${i}`;
+                if(i === 1) {
+                    dot.classList.add('bg-rose-600', 'w-6');
+                    dot.classList.remove('bg-rose-300', 'w-1.5');
+                }
+                container.appendChild(clone);
+            }
+        }
+
+        function updateProgressDots() {
+            for(let i = 1; i <= totalSteps; i++) {
+                const dot = document.getElementById(`nav-dot-${i}`);
+                if (dot) {
+                    if (i === currentStep) {
+                        dot.classList.add('bg-rose-600', 'w-6');
+                        dot.classList.remove('bg-rose-300', 'w-1.5');
+                    } else {
+                        dot.classList.remove('bg-rose-600', 'w-6');
+                        dot.classList.add('bg-rose-300', 'w-1.5');
+                    }
+                }
+            }
+        }
+
+        // STEP WORKFLOW NAVIGATION
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                document.getElementById(`step-${currentStep}`).classList.add('hidden');
+                document.getElementById(`step-${currentStep}`).classList.remove('flex');
+                
+                currentStep++;
+                document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+                document.getElementById(`step-${currentStep}`).classList.add('flex');
+                
+                updateProgressDots();
+                triggerConfettiOnStepTransition();
+            }
+        }
+
+        function resetJourney() {
+            loveTapCount = 0;
+            const fillEl = document.getElementById('loveFill');
+            fillEl.style.height = "10%";
+            document.getElementById('lovePercent').innerText = "10%";
+            document.getElementById('loveMeterNextBtn').disabled = true;
+            document.getElementById('loveMeterNextBtn').className = "bg-gray-300 text-gray-500 font-bold px-8 py-2.5 rounded-full shadow-sm text-xs cursor-not-allowed w-full max-w-[240px] transition-all";
+            document.getElementById('loveMeterNextBtn').innerText = "Fill Meter First 💖";
+
+            promiseTouched = false;
+            document.getElementById('promiseNextBtn').disabled = true;
+            document.getElementById('promiseNextBtn').className = "bg-gray-300 text-gray-500 font-bold px-8 py-2.5 rounded-full shadow-sm text-xs cursor-not-allowed w-full max-w-[240px] transition-all";
+            document.getElementById('promiseNextBtn').innerText = "Tap To Promise 🤙";
+            document.getElementById('promiseHeart').className = "absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 text-rose-500 text-3xl opacity-0 transition-all duration-500 scale-50";
+            document.getElementById('promiseHint').innerText = `"A million promises kept, and a billion more to go. Stay by my side?"`;
+
+            candleBlown = false;
+            const flame = document.getElementById('candleFlame');
+            flame.style.opacity = "1";
+            flame.style.transform = "scale(1)";
+            document.getElementById('candleNextBtn').disabled = true;
+            document.getElementById('candleNextBtn').className = "bg-gray-300 text-gray-500 font-bold px-8 py-2.5 rounded-full shadow-sm text-xs cursor-not-allowed w-full max-w-[240px] transition-all";
+            document.getElementById('candleNextBtn').innerText = "Make a Wish First 🎂";
+
+            // Reset envelope letter
+            const envelope = document.getElementById('envelope');
+            envelope.classList.remove('envelope-open');
+
+            // Reset Gift
+            giftTaps = 3;
+            document.getElementById('giftBadge').innerText = "3";
+            document.getElementById('giftBadge').classList.remove('hidden');
+            document.getElementById('giftCap').style.transform = "none";
+            document.getElementById('giftCap').style.opacity = "1";
+            document.getElementById('giftKeepsakeCard').classList.add('hidden');
+            document.getElementById('giftBoxVisual').classList.remove('hidden');
+            document.getElementById('giftMessageHint').innerText = "Tap the gift 3 times!";
+            document.getElementById('oracleOutput').innerText = `"Rajnish & Muskan — A match woven in starlight. Type a prompt below or click one of the magic buttons to consult your romantic future!"`;
+
+            // Reset Sweet Moments index stack view
+            activeCardIndex = 1;
+            const totalCards = 6;
+            for(let i = 1; i <= totalCards; i++) {
+                const card = document.getElementById(`card-${i}`);
+                if (card) {
+                    card.style.opacity = "1";
+                    card.style.zIndex = i === 1 ? "10" : "1";
+                    if(i === 1) card.style.transform = "rotate(-3deg) translateX(1px)";
+                    else if(i === 2) card.style.transform = "rotate(1deg) translateY(-2px)";
+                    else if(i === 3) card.style.transform = "rotate(-1deg) translateY(2px)";
+                    else if(i === 4) card.style.transform = "rotate(3deg) translateX(1px)";
+                    else if(i === 5) card.style.transform = "rotate(-2deg) translateY(-1px)";
+                    else if(i === 6) card.style.transform = "rotate(2deg) translateY(1px)";
+                }
+            }
+
+            document.getElementById(`step-${currentStep}`).classList.add('hidden');
+            document.getElementById(`step-${currentStep}`).classList.remove('flex');
+            
+            currentStep = 1;
+            document.getElementById(`step-${currentStep}`).classList.remove('hidden');
+            document.getElementById(`step-${currentStep}`).classList.add('flex');
+            
+            updateProgressDots();
+        }
+
+        function triggerConfettiOnStepTransition() {
+            if(currentStep === 3 || currentStep === 6 || currentStep === 7) {
+                confetti({
+                    particleCount: 40,
+                    spread: 45,
+                    origin: { y: 0.8 },
+                    colors: ['#f43f5e', '#ec4899', '#f472b6']
+                });
+            }
+        }
+
+        // LIVE COUNTDOWN TIMER
+        function updateCountdown() {
+            const targetStr = document.getElementById('cfgTargetDate').value;
+            if(!targetStr) return;
+
+            const targetDate = new Date(targetStr).getTime();
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            if (difference <= 0) {
+                document.getElementById('days').innerText = "00";
+                document.getElementById('hours').innerText = "00";
+                document.getElementById('minutes').innerText = "00";
+                document.getElementById('seconds').innerText = "00";
+                return;
+            }
+
+            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+            document.getElementById('days').innerText = String(days).padStart(2, '0');
+            document.getElementById('hours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('minutes').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').innerText = String(seconds).padStart(2, '0');
+        }
+
+        // INTERACTIVE RUNAWAY "NO" BUTTON
+        function setupRunawayNoBtn() {
+            const button = document.getElementById('runawayNoBtn');
+            
+            const runAwayLogic = (e) => {
+                e.preventDefault();
+                const container = button.parentElement;
+                const containerWidth = container.offsetWidth;
+                const buttonWidth = button.offsetWidth;
+                
+                const randomLeft = Math.floor(Math.random() * (containerWidth - buttonWidth));
+                button.style.left = `${randomLeft}px`;
+                
+                const tips = ["You can't say no! 😜", "Try clicking me again!", "Aww, please? 🥺", "Yes is the only way!"];
+                const randomTip = tips[Math.floor(Math.random() * tips.length)];
+                button.innerText = randomTip;
+            };
+
+            button.addEventListener('mouseover', runAwayLogic);
+            button.addEventListener('touchstart', runAwayLogic);
+        }
+
+        // POLAROID DYNAMIC SLIDER LOGIC FOR 6 SWEET MOMENTS CARDS
+        let activeCardIndex = 1;
+        const totalCards = 6;
+
+        function handleCardNav(direction) {
+            const currentCard = document.getElementById(`card-${activeCardIndex}`);
+            if(!currentCard) return;
+
+            if (direction > 0) {
+                currentCard.style.transform = "translateX(350px) rotate(20deg)";
+                currentCard.style.opacity = "0";
+            } else {
+                currentCard.style.transform = "translateX(-350px) rotate(-20deg)";
+                currentCard.style.opacity = "0";
+            }
+
+            setTimeout(() => {
+                currentCard.style.zIndex = "1";
+                
+                // Keep the stacked aesthetic offsets when sending cards back to bottom of stack
+                if(activeCardIndex === 1) currentCard.style.transform = "rotate(-3deg) translateX(1px)";
+                else if(activeCardIndex === 2) currentCard.style.transform = "rotate(1deg) translateY(-2px)";
+                else if(activeCardIndex === 3) currentCard.style.transform = "rotate(-1deg) translateY(2px)";
+                else if(activeCardIndex === 4) currentCard.style.transform = "rotate(3deg) translateX(1px)";
+                else if(activeCardIndex === 5) currentCard.style.transform = "rotate(-2deg) translateY(-1px)";
+                else if(activeCardIndex === 6) currentCard.style.transform = "rotate(2deg) translateY(1px)";
+                
+                currentCard.style.opacity = "1";
+                
+                activeCardIndex = activeCardIndex === totalCards ? 1 : activeCardIndex + 1;
+                
+                for(let i = 1; i <= totalCards; i++) {
+                    const card = document.getElementById(`card-${i}`);
+                    if(card) {
+                        if(i === activeCardIndex) {
+                            card.style.zIndex = "10";
+                        } else {
+                            card.style.zIndex = "1";
+                        }
+                    }
+                }
+            }, 500);
+        }
+
+        // LOVE METER MECHANISM
+        function fillLoveMeter() {
+            if (loveTapCount >= maxLoveTaps) return;
+
+            loveTapCount++;
+            const percentage = Math.min(10 + Math.floor((loveTapCount / maxLoveTaps) * 90), 100);
+            
+            const fillEl = document.getElementById('loveFill');
+            const percentEl = document.getElementById('lovePercent');
+            
+            fillEl.style.height = `${percentage}%`;
+            percentEl.innerText = `${percentage}%`;
+
+            const pulseScale = 1 + (loveTapCount * 0.03);
+            percentEl.style.transform = `scale(${pulseScale})`;
+            setTimeout(() => percentEl.style.transform = "scale(1)", 150);
+
+            confetti({
+                particleCount: 5,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0.3, y: 0.65 },
+                colors: ['#ec4899', '#f43f5e']
+            });
+            confetti({
+                particleCount: 5,
+                angle: 120,
+                spread: 55,
+                origin: { x: 0.7, y: 0.65 },
+                colors: ['#ec4899', '#f43f5e']
+            });
+
+            if (loveTapCount === maxLoveTaps) {
+                percentEl.innerText = "100% yours";
+                confetti({
+                    particleCount: 80,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    colors: ['#ff003c', '#ff6b8b', '#ffb3c1']
+                });
+
+                const nextBtn = document.getElementById('loveMeterNextBtn');
+                nextBtn.disabled = false;
+                nextBtn.className = "bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-2.5 rounded-full shadow-md transform active:scale-95 transition-all text-xs w-full max-w-[240px] animate-heartbeat";
+                nextBtn.innerText = "Continue Journey ❤️";
+            }
+        }
+
+        // PINKY PROMISE LOGIC
+        function touchPromise() {
+            if(promiseTouched) return;
+            promiseTouched = true;
+
+            const heart = document.getElementById('promiseHeart');
+            heart.classList.remove('opacity-0', 'scale-50');
+            heart.classList.add('opacity-100', 'scale-125');
+
+            document.getElementById('promiseHint').innerHTML = `"Pinky promise locked! I will stay forever." 🤞❤️`;
+
+            confetti({
+                particleCount: 50,
+                spread: 60,
+                origin: { y: 0.7 },
+                colors: ['#ff0a54', '#ff477e', '#ff7096', '#ff85a1']
+            });
+
+            const nextBtn = document.getElementById('promiseNextBtn');
+            nextBtn.disabled = false;
+            nextBtn.className = "bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-2.5 rounded-full shadow-md transform active:scale-95 transition-all text-xs w-full max-w-[240px]";
+            nextBtn.innerText = "Beautiful Promise... Next 🌸";
+        }
+
+        // MIC CANDLE BLOWING LOGIC
+        async function toggleMicBlowDetection() {
+            const micBtn = document.getElementById('micBtn');
+            const micBtnText = document.getElementById('micBtnText');
+
+            if (isListening) {
+                stopMicrophone();
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                micStream = stream;
+                
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                const source = audioContext.createMediaStreamSource(stream);
+                source.connect(analyser);
+                
+                analyser.fftSize = 256;
+                const bufferLength = analyser.frequencyBinCount;
+                const dataArray = new Uint8Array(bufferLength);
+
+                isListening = true;
+                micBtn.classList.replace('bg-rose-600', 'bg-emerald-600');
+                micBtnText.innerText = "Listening... Blow now!";
+
+                const checkVolume = () => {
+                    if (!isListening || candleBlown) return;
+
+                    analyser.getByteFrequencyData(dataArray);
+                    let sum = 0;
+                    for (let i = 0; i < bufferLength; i++) {
+                        sum += dataArray[i];
+                    }
+                    let average = sum / bufferLength;
+
+                    if (average > 65) {
+                        extinguishCandle();
+                    } else {
+                        requestAnimationFrame(checkVolume);
+                    }
+                };
+                
+                checkVolume();
+
+            } catch (err) {
+                console.warn("Microphone access denied or not supported.", err);
+                micBtnText.innerText = "Mic blocked, use tap below!";
+                setTimeout(() => {
+                    micBtnText.innerText = "Blow into the mic";
+                }, 3000);
+            }
+        }
+
+        function stopMicrophone() {
+            isListening = false;
+            const micBtn = document.getElementById('micBtn');
+            const micBtnText = document.getElementById('micBtnText');
+            micBtn.classList.replace('bg-emerald-600', 'bg-rose-600');
+            micBtnText.innerText = "Blow into the mic";
+
+            if (micStream) {
+                micStream.getTracks().forEach(track => track.stop());
+            }
+            if (audioContext) {
+                audioContext.close();
+            }
+        }
+
+        function extinguishCandle() {
+            if(candleBlown) return;
+            candleBlown = true;
+            stopMicrophone();
+
+            const flame = document.getElementById('candleFlame');
+            flame.style.opacity = "0";
+            flame.style.transform = "scale(0)";
+
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#ffe5ec', '#ffb3c1', '#ff758f', '#c9184a']
+            });
+
+            const nextBtn = document.getElementById('candleNextBtn');
+            nextBtn.disabled = false;
+            nextBtn.className = "bg-rose-600 hover:bg-rose-700 text-white font-bold px-8 py-2.5 rounded-full shadow-md transform active:scale-95 transition-all text-xs w-full max-w-[240px]";
+            nextBtn.innerText = "My Wish is Made ❤️";
+        }
+
+        // ENVELOPE OPENING LOGIC
+        function toggleEnvelopeOpen() {
+            const envelope = document.getElementById('envelope');
+            envelope.classList.toggle('envelope-open');
+        }
+
+        // KEEPSAKE BOX SURPRISE
+        function tapGift() {
+            if(giftTaps <= 0) return;
+
+            giftTaps--;
+            const badge = document.getElementById('giftBadge');
+            badge.innerText = giftTaps;
+
+            const boxVisual = document.getElementById('giftBoxVisual');
+            boxVisual.classList.add('animate-bounce');
+            setTimeout(() => boxVisual.classList.remove('animate-bounce'), 300);
+
+            if(giftTaps === 0) {
+                badge.classList.add('hidden');
+                
+                const giftCap = document.getElementById('giftCap');
+                giftCap.style.transform = "translateY(-80px) rotate(-15deg)";
+                giftCap.style.opacity = "0";
+
+                setTimeout(() => {
+                    boxVisual.classList.add('hidden');
+                    document.getElementById('giftKeepsakeCard').classList.remove('hidden');
+                    document.getElementById('giftMessageHint').innerText = "Our Love Card Unlocked! ❤️";
+
+                    let duration = 3 * 1000;
+                    let end = Date.now() + duration;
+
+                    (function frame() {
+                        confetti({
+                            particleCount: 4,
+                            angle: 60,
+                            spread: 55,
+                            origin: { x: 0 },
+                            colors: ['#ff0a54', '#ff85a1', '#f72585']
+                        });
+                        confetti({
+                            particleCount: 4,
+                            angle: 120,
+                            spread: 55,
+                            origin: { x: 1 },
+                            colors: ['#ff0a54', '#ff85a1', '#f72585']
+                        });
+
+                        if (Date.now() < end) {
+                            requestAnimationFrame(frame);
+                        }
+                    }());
+
+                }, 400);
+            }
+        }
+
+        // CUSTOMIZER DRAWER ACTIONS
+        function toggleConfigDrawer() {
+            const drawer = document.getElementById('drawerContent');
+            drawer.classList.toggle('hidden');
+        }
+
+        function applyConfiguration() {
+            const partnerNameVal = document.getElementById('cfgPartnerName').value.trim() || "Muskan";
+            const yourNameVal = document.getElementById('cfgYourName').value.trim() || "Rajnish";
+            const letterVal = document.getElementById('cfgLetterText').value.trim();
+
+            partnerName = partnerNameVal;
+            yourName = yourNameVal;
+
+            document.querySelectorAll('.partner-name').forEach(el => el.innerText = partnerName);
+            document.querySelectorAll('.your-name').forEach(el => el.innerText = yourName);
+            document.getElementById('letterTextOutput').innerText = letterVal;
+
+            const drawer = document.getElementById('drawerContent');
+            drawer.classList.add('hidden');
+        }
+
+        // Upload image handler to update the Polaroid slides and their thumbnails
+        function handleImageUpload(cardIndex, event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Generate a temporary browser URL for the uploaded image file
+                const uploadedUrl = URL.createObjectURL(file);
+                
+                // Update corresponding Polaroid card image
+                const cardImg = document.querySelector(`#card-${cardIndex} img`);
+                if (cardImg) {
+                    cardImg.src = uploadedUrl;
+                }
+
+                // Update small preview thumbnail inside Drawer panel
+                const thumbImg = document.getElementById(`thumb-preview-${cardIndex}`);
+                if (thumbImg) {
+                    thumbImg.src = uploadedUrl;
+                }
+
+                // Play a brief visual confirmation celebration
+                confetti({
+                    particleCount: 15,
+                    spread: 30,
+                    colors: ['#fb7185', '#fda4af']
+                });
+            }
+        }
+
+        // ==========================================
+        // GEMINI API CALL FUNCTIONS (TEXT CONTENT GENERATION)
+        // ==========================================
+        async function fetchFromGemini(systemPrompt, userQuery) {
+            const apiKey = ""; // API key automatically injected in Canvas environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: userQuery }] }],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                }
+            };
+
+            // Implement Exponential Backoff for stability
+            let maxRetries = 3;
+            let delay = 1000;
+
+            for (let attempt = 1; attempt <= maxRetries; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const candidate = result.candidates?.[0];
+                    if (candidate && candidate.content?.parts?.[0]?.text) {
+                        return candidate.content.parts[0].text;
+                    } else {
+                        throw new Error("Unexpected API response structure.");
+                    }
+                } catch (error) {
+                    if (attempt === maxRetries) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2; // exponential backoff
+                }
+            }
+        }
+
+        async function generateAILoveLetter() {
+            const tone = document.getElementById('aiLetterTone').value;
+            const memory = document.getElementById('aiLetterMemory').value.trim();
+            const genBtn = document.getElementById('aiGenerateBtn');
+
+            const pName = document.getElementById('cfgPartnerName').value.trim() || "Muskan";
+            const yName = document.getElementById('cfgYourName').value.trim() || "Rajnish";
+
+            genBtn.disabled = true;
+            genBtn.innerHTML = `<i class="fa-solid fa-sync animate-spin"></i> Writing...`;
+
+            const systemPrompt = `You are a world-class romantic writer, poet, and storyteller. Your task is to write a warm, deeply moving, and personalized anniversary love letter from ${yName} to ${pName}. Keep it relatively concise (about 3-4 short beautiful paragraphs) so it fits beautifully inside an envelope letter visualizer. Use a tone of "${tone}". Do NOT use generic placeholder markers like '[Your Name]'; always write with the actual names provided. Keep it intimate, natural, and authentic.`;
+            
+            let userQuery = `Write a letter commemorating our 1st anniversary.`;
+            if (memory) {
+                userQuery += ` Please specifically and beautifully reference this special memory of ours: "${memory}".`;
+            }
+
+            try {
+                const generatedLetter = await fetchFromGemini(systemPrompt, userQuery);
+                document.getElementById('cfgLetterText').value = generatedLetter;
+                applyConfiguration();
+
+                // Trigger confetti to celebrate
+                confetti({
+                    particleCount: 30,
+                    spread: 40,
+                    colors: ['#f43f5e', '#ec4899']
+                });
+
+                // Show feedback
+                genBtn.innerHTML = `<i class="fa-solid fa-check"></i> Letter Generated!`;
+                setTimeout(() => {
+                    genBtn.disabled = false;
+                    genBtn.innerHTML = `<i class="fa-solid fa-sparkles"></i> Generate AI Letter`;
+                }, 3000);
+
+            } catch (error) {
+                console.error("Gemini API Error:", error);
+                genBtn.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> Error! Try again`;
+                setTimeout(() => {
+                    genBtn.disabled = false;
+                    genBtn.innerHTML = `<i class="fa-solid fa-sparkles"></i> Generate AI Letter`;
+                }, 3000);
+            }
+        }
+
+        async function askLoveOracle(type) {
+            const promptInput = document.getElementById('aiOraclePrompt');
+            const customText = promptInput.value.trim();
+            const outputEl = document.getElementById('oracleOutput');
+            const loadingEl = document.getElementById('oracleLoading');
+
+            loadingEl.classList.remove('hidden');
+
+            const pName = partnerName;
+            const yName = yourName;
+
+            let systemPrompt = "";
+            let query = "";
+
+            if (type === 'fortune') {
+                systemPrompt = `You are a mystical, warm Relationship Oracle and astrologer who writes adorable, heartwarming relationship fortunes. Craft a beautiful relationship destiny or fortune for the couple ${yName} and ${pName}. Keep it positive, incredibly cute, romantic, and under 100 words.`;
+                query = customText ? `Predict our future based on this context: "${customText}"` : `What does the stars say about our future love journey together?`;
+            } else if (type === 'poem') {
+                systemPrompt = `You are a romantic poet who writes sweet, touching, and creative rhyming stanzas. Write a heartwarming rhyming poem (2 stanzas) dedicated to the relationship of ${yName} and ${pName}. Keep it under 100 words.`;
+                query = customText ? `Write a poem mentioning: "${customText}"` : `Write an anniversary poem about our lovely story.`;
+            }
+
+            try {
+                const generatedResponse = await fetchFromGemini(systemPrompt, query);
+                
+                // Animate text typewriter-style for high-quality romance aesthetic
+                loadingEl.classList.add('hidden');
+                promptInput.value = ""; // clear input
+                typeWriterEffect(outputEl, generatedResponse);
+
+                // Little puff of confetti
+                confetti({
+                    particleCount: 15,
+                    spread: 30,
+                    origin: { y: 0.8 },
+                    colors: ['#ec4899', '#f43f5e']
+                });
+
+            } catch (error) {
+                console.error("Gemini Oracle Error:", error);
+                loadingEl.classList.add('hidden');
+                outputEl.innerText = "The stars are temporarily obscured by clouds. Please try querying the Love Oracle once more! ❤️";
+            }
+        }
+
+        // Elegant Typewriter animation for Gemini responses
+        function typeWriterEffect(element, text) {
+            element.innerHTML = "";
+            let i = 0;
+            const speed = 25; // millisecond delay per character
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        // ==========================================
+        // BACKGROUND FLOATING HEART CANVAS PARTICLES
+        // ==========================================
+        let hearts = [];
+        let canvas, ctx;
+
+        function initHeartCanvas() {
+            canvas = document.getElementById('heartCanvas');
+            ctx = canvas.getContext('2d');
+
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            for (let i = 0; i < 20; i++) {
+                hearts.push(createHeart(true));
+            }
+
+            animateHearts();
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function createHeart(initRandom = false) {
+            return {
+                x: Math.random() * canvas.width,
+                y: initRandom ? Math.random() * canvas.height : canvas.height + 20,
+                size: Math.random() * 12 + 6,
+                speedY: Math.random() * 1.2 + 0.4,
+                opacity: Math.random() * 0.5 + 0.2,
+                wiggle: Math.random() * 2,
+                wiggleSpeed: Math.random() * 0.02 + 0.01
+            };
+        }
+
+        function drawHeartShape(ctx, x, y, size) {
+            ctx.beginPath();
+            ctx.moveTo(x, y + size / 4);
+            ctx.quadraticCurveTo(x, y, x + size / 2, y);
+            ctx.quadraticCurveTo(x + size, y, x + size, y + size / 3);
+            ctx.quadraticCurveTo(x + size, y + size * 2/3, x + size / 2, y + size);
+            ctx.quadraticCurveTo(x, y + size * 2/3, x, y + size / 3);
+            ctx.quadraticCurveTo(x, y, x, y + size / 4);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function animateHearts() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            hearts.forEach((heart, index) => {
+                heart.y -= heart.speedY;
+                heart.x += Math.sin(heart.wiggle) * 0.4;
+                heart.wiggle += heart.wiggleSpeed;
+
+                ctx.fillStyle = `rgba(244, 63, 94, ${heart.opacity})`;
+                drawHeartShape(ctx, heart.x, heart.y, heart.size);
+
+                if (heart.y < -30) {
+                    hearts[index] = createHeart(false);
+                }
+            });
+
+            requestAnimationFrame(animateHearts);
+        }
+    </script>
+</body>
+</html>
